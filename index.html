@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="LotPilot position size calculator for Forex risk management.">
+<title>LotPilot — Position Size Calculator</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#121a2d;--panel2:#18233a;--line:#263550;--text:#eaf0fb;--muted:#91a1bb;--accent:#69e0b1;--blue:#8eb8ff;--danger:#ff8b8b}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172440 0%,var(--bg) 55%);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text)}
+main{max-width:1050px;margin:0 auto;padding:28px 16px 60px}.top{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}.brand{font-size:23px;font-weight:800;letter-spacing:-.6px}.brand span{color:var(--accent)}.tag{color:var(--muted);font-size:13px}
+.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}.panel{background:rgba(18,26,45,.94);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 12px 35px #0002}.panel h2{margin:0 0 18px;font-size:17px}.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}.field{display:flex;flex-direction:column;gap:7px}.field.full{grid-column:1/-1}label{font-size:12px;color:var(--muted);font-weight:650;letter-spacing:.3px}input,select{width:100%;border:1px solid var(--line);background:#0d1527;color:var(--text);padding:12px 11px;border-radius:10px;font:inherit;outline:none}input:focus,select:focus{border-color:var(--accent)}.switch{display:flex;gap:8px;background:#0c1425;border:1px solid var(--line);border-radius:12px;padding:5px;margin-bottom:18px}.switch button{flex:1;background:transparent;border:0;color:var(--muted);padding:10px;border-radius:8px;font-weight:700;cursor:pointer}.switch button.active{background:var(--panel2);color:var(--accent)}button.primary{background:var(--accent);color:#062116;border:0;border-radius:11px;padding:13px 16px;font-weight:800;cursor:pointer;width:100%;margin-top:16px}button.secondary{background:#192742;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:9px 12px;cursor:pointer}.result{display:flex;flex-direction:column;gap:14px}.hero{background:linear-gradient(135deg,#122b2b,#142039);border:1px solid #28534b;border-radius:15px;padding:20px}.hero small{color:#a5c9bf;font-weight:700;letter-spacing:.5px}.lots{font-size:42px;font-weight:850;letter-spacing:-1.5px;margin:5px 0;color:var(--accent);word-break:break-word}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#0e1729;border:1px solid var(--line);border-radius:12px;padding:14px}.stat small{display:block;color:var(--muted);font-size:12px}.stat strong{display:block;font-size:18px;margin-top:4px}.notice{font-size:12px;color:var(--muted);padding:12px;background:#0d1527;border-radius:10px;border:1px solid var(--line)}.status{font-size:12px;color:var(--muted);margin-top:8px;min-height:18px}.hidden{display:none!important}.foot{margin-top:20px;color:var(--muted);font-size:12px;text-align:center}.bad{color:var(--danger)}@media(max-width:760px){.grid{grid-template-columns:1fr}.fields{grid-template-columns:1fr 1fr}.panel{padding:17px}.lots{font-size:36px}}@media(max-width:440px){.fields,.stats{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body><main>
+<header class="top"><div><div class="brand">LOT<span>PILOT</span></div><div class="tag">Position sizing · Risk first</div></div><div class="tag">A GitHub-ready web app</div></header>
+<div class="grid">
+<section class="panel"><h2>Trade parameters</h2>
+<div class="switch" role="tablist" aria-label="Calculation mode"><button id="autoBtn" class="active" type="button">Auto conversion</button><button id="manualBtn" type="button">Manual pip value</button></div>
+<div class="fields">
+<div class="field"><label for="symbol">Instrument</label><select id="symbol"><option>EURUSD</option><option>GBPUSD</option><option>USDJPY</option><option>USDCHF</option><option>USDCAD</option><option>AUDUSD</option><option>NZDUSD</option><option>EURJPY</option><option>GBPJPY</option><option>EURGBP</option><option>AUDJPY</option><option>CADJPY</option><option>CHFJPY</option><option>NZDJPY</option><option>EURCHF</option><option>GBPCAD</option><option>AUDCAD</option><option>Custom instrument</option></select></div>
+<div class="field"><label for="accountCurrency">Account currency</label><select id="accountCurrency"><option>USD</option><option>EUR</option><option>GBP</option><option>JPY</option><option>CHF</option><option>CAD</option><option>AUD</option><option>NZD</option><option>KES</option></select></div>
+<div class="field"><label for="balance">Account balance / equity</label><input id="balance" type="number" min="0" step="any" value="1000"></div>
+<div class="field"><label for="risk">Risk per trade (%)</label><input id="risk" type="number" min="0" max="100" step="any" value="1"></div>
+<div class="field"><label for="stop">Stop loss distance (pips)</label><input id="stop" type="number" min="0" step="any" value="20"></div>
+<div class="field"><label for="pipSize">Pip size (price)</label><input id="pipSize" type="number" min="0" step="any" value="0.0001"></div>
+<div class="field"><label for="contract">Contract size (units per lot)</label><input id="contract" type="number" min="1" step="any" value="100000"></div>
+<div class="field full" id="manualField"><label for="manualPipValue">Pip value per 1.00 lot (account currency)</label><input id="manualPipValue" type="number" min="0" step="any" value="10"></div>
+<div class="field full" id="customField" hidden><label for="customPair">Custom instrument label (optional)</label><input id="customPair" placeholder="e.g. XAUUSD"></div>
+</div>
+<button class="primary" id="calculate" type="button">Calculate position size</button><div class="status" id="status" aria-live="polite"></div>
+</section>
+<section class="panel result"><h2>Your position size</h2><div class="hero"><small>CALCULATED LOT SIZE</small><div class="lots" id="lots">0.05 lots</div><div id="lotSub" class="tag">Estimated position size</div></div>
+<div class="stats"><div class="stat"><small>Money at risk</small><strong id="riskMoney">$10.00</strong></div><div class="stat"><small>Position units</small><strong id="units">5,000</strong></div><div class="stat"><small>Pip value / 1 lot</small><strong id="pipValue">$10.00</strong></div><div class="stat"><small>Potential loss at SL</small><strong id="loss">$10.00</strong></div></div>
+<div class="notice" id="conversionNote">Auto mode uses a reference FX conversion rate. It may not match your broker’s live quote.</div>
+<div class="notice">This tool is educational. Results are estimates and exclude spread, commission, swaps, slippage, margin requirements, and broker-specific contract rules. Verify instrument specifications before trading.</div>
+</section></div><div class="foot">LotPilot · No account or trade execution · Rates are reference data only</div>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+let mode='auto';
+const currencies=['USD','EUR','GBP','JPY','CHF','CAD','AUD','NZD','KES'];
+function setMode(next){mode=next;$('autoBtn').classList.toggle('active',mode==='auto');$('manualBtn').classList.toggle('active',mode==='manual');$('manualField').classList.toggle('hidden',mode==='auto');$('conversionNote').textContent=mode==='auto'?'Auto mode fetches a reference conversion rate from Frankfurter. It is not a broker live quote.':'Manual mode uses your entered pip value per standard lot in the account currency.';calc();}
+$('autoBtn').onclick=()=>setMode('auto');$('manualBtn').onclick=()=>setMode('manual');
+function instrumentParts(){const s=$('symbol').value;if(s==='Custom instrument'){const label=$('customPair').value.trim().toUpperCase();return {base:label.slice(0,3),quote:label.slice(3,6)};}return {base:s.slice(0,3),quote:s.slice(3,6)};}
+function updatePip(){const {base,quote}=instrumentParts();$('pipSize').value=(quote==='JPY'?'0.01':'0.0001');}
+$('symbol').addEventListener('change',()=>{$('customField').hidden=$('symbol').value!=='Custom instrument';updatePip();calc();});
+$('customPair').addEventListener('input',()=>{updatePip();calc();});
+['balance','risk','stop','pipSize','contract','manualPipValue','accountCurrency'].forEach(id=>$(id).addEventListener('input',calc));
+async function getConversion(from,to){
+ if(from===to)return {rate:1,source:'same currency'};
+ // Frankfurter is reference FX data; use direct cross conversion. KES may be unavailable, so user can use manual mode.
+ const url=`https://api.frankfurter.dev/v1/latest?base=${encodeURIComponent(from)}&symbols=${encodeURIComponent(to)}`;
+ const response=await fetch(url);if(!response.ok)throw new Error('Rate unavailable for '+from+' → '+to);
+ const data=await response.json();const rate=data.rates?.[to];if(!(rate>0))throw new Error('No rate returned for '+from+' → '+to);
+ return {rate,source:`${data.date} reference rate`};
+}
+async function calc(){
+ const balance=Number($('balance').value),riskPct=Number($('risk').value),stop=Number($('stop').value),pip=Number($('pipSize').value),contract=Number($('contract').value);
+ if(!(balance>0&&riskPct>0&&riskPct<=100&&stop>0&&pip>0&&contract>0)){ $('lots').textContent='—';$('status').textContent='Enter positive values. Risk must be above 0 and at most 100%.';return;}
+ const riskMoney=balance*riskPct/100;let pipValue,conversionLabel='Manual pip value';
+ if(mode==='manual'){pipValue=Number($('manualPipValue').value);if(!(pipValue>0)){$('status').textContent='Enter a positive pip value per lot.';return;}}
+ else{
+  const {quote}=instrumentParts(),account=$('accountCurrency').value;
+  if(!quote||quote.length!==3){$('status').textContent='For a custom instrument, enter a 6-letter symbol or use manual mode.';return;}
+  $('status').textContent='Fetching reference conversion rate…';$('calculate').disabled=true;
+  try{const cv=await getConversion(quote,account);pipValue=contract*pip*cv.rate;conversionLabel=`${cv.source}: 1 ${quote} = ${cv.rate.toFixed(6)} ${account}`;}
+  catch(e){$('status').textContent=e.message+' — switch to manual mode or try another account currency.';$('calculate').disabled=false;return;}
+  finally{$('calculate').disabled=false;}
+ }
+ const lots=riskMoney/(stop*pipValue);const units=lots*contract;
+ $('lots').textContent=lots.toFixed(3)+' lots';$('lotSub').textContent=`${$('symbol').value} · ${mode==='auto'?'Auto conversion':'Manual pip value'}`;
+ $('riskMoney').textContent=money(riskMoney,$('accountCurrency').value);$('units').textContent=Math.round(units).toLocaleString();$('pipValue').textContent=money(pipValue,$('accountCurrency').value);$('loss').textContent=money(lots*stop*pipValue,$('accountCurrency').value);
+ $('conversionNote').textContent=conversionLabel;$('status').textContent='Calculation updated. Verify values with your broker.';
+}
+function money(n,c){try{return new Intl.NumberFormat(undefined,{style:'currency',currency:c,maximumFractionDigits:2}).format(n);}catch{return n.toFixed(2)+' '+c;}}
+$('calculate').onclick=calc;updatePip();calc();
+</script></body></html>
